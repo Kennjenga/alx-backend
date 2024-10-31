@@ -1,17 +1,17 @@
 #!/usr/bin/python3
-"""FIFO Cache Replacement Implementation Class
+"""MRU Cache Replacement Implementation Class
 """
 from threading import RLock
 
 BaseCaching = __import__('base_caching').BaseCaching
 
 
-class FIFOCache(BaseCaching):
+class MRUCache(BaseCaching):
     """
-    An implementation of FIFO(First In Fisrt Out) Cache
+    An implementation of MRU(Most Recently Used) Cache
 
     Attributes:
-        __keys (list): Stores cache keys in order of entry using `.append`
+        __keys (list): Stores cache keys from least to most accessed
         __rlock (RLock): Lock accessed resources to prevent race condition
     """
 
@@ -22,7 +22,7 @@ class FIFOCache(BaseCaching):
         self.__keys = []
         self.__rlock = RLock()
 
-    def put(self, key3-lru_cache.py, item):
+    def put(self, key, item):
         """ Add an item in the cache
         """
         if key is not None and item is not None:
@@ -36,17 +36,22 @@ class FIFOCache(BaseCaching):
         """ Get an item by key
         """
         with self.__rlock:
-            return self.cache_data.get(key, None)
+            value = self.cache_data.get(key, None)
+            if key in self.__keys:
+                self._balance(key)
+        return value
 
     def _balance(self, keyIn):
-        """ Removes the oldest item from the cache at MAX size
+        """ Removes the earliest item from the cache at MAX size
         """
         keyOut = None
         with self.__rlock:
+            keysLength = len(self.__keys)
             if keyIn not in self.__keys:
-                keysLength = len(self.__keys)
                 if len(self.cache_data) == BaseCaching.MAX_ITEMS:
-                    keyOut = self.__keys.pop(0)
+                    keyOut = self.__keys.pop(keysLength - 1)
                     self.cache_data.pop(keyOut)
-                self.__keys.insert(keysLength, keyIn)
+            else:
+                self.__keys.remove(keyIn)
+            self.__keys.insert(keysLength, keyIn)
         return keyOut
