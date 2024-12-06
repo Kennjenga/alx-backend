@@ -6,6 +6,7 @@ Read or watch:
 - [Redis client interface](https://redis.io/topics/clients)
 - [Redis client for Node JS](https://github.com/NodeRedis/node-redis)
 - [Kue (deprecated but still used in the industry)](https://github.com/Automattic/kue)
+- sudo find / -name "dump.rdb"
 
 # Learning Objectives
 
